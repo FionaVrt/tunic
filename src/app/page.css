@@ -1,0 +1,17 @@
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    border: 1px solid rgb(200, 200, 200);
+    width: 70vh;
+    height: 70vh;
+}
