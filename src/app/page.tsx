@@ -9,12 +9,20 @@ const tunicFontData = {
     "N": [[0.1, 0], [0.1, 1], [0.9, 0], [0.9, 1]],
     "I": [[0.1, 0], [0.9, 0], [0.5, 0], [0.5, 1], [0.1, 1], [0.9, 1]],
     "C": [[0.9, 0.1], [0.1, 0.1], [0.1, 0.9], [0.9, 0.9]],
+    "@": [[0.5, 0], [0, 0.5], [0.5, 1], [1, 0.5], [0.5, 0], [0.9, 0.1], [0.1, 0.9]],
+    "#": [[0.3, 0], [0.3, 1], [0.7, 0], [0.7, 1], [0, 0.3], [1, 0.3], [0, 0.7], [1, 0.7]],
+    "&": [[0.8, 0], [0.2, 1], [0.8, 1], [0.2, 0.3], [0.8, 0.7]],
+    "*": [[0.5, 0], [0.5, 1], [0, 0.5], [1, 0.5], [0.2, 0.2], [0.8, 0.8], [0.2, 0.8], [0.8, 0.2]],
+    "?": [[0.5, 0], [0.9, 0.4], [0.5, 0.8], [0.5, 1], [0.5, 0.9]],
+    "!": [[0.5, 0], [0.5, 0.7], [0.5, 1]]
 };
 
 const words = [
     "MAGIC", "FLOAT", "WAVES", "DREAM", "CODE", "LIGHT", "SHINE", "GLIDE",
     "BREEZE", "SOFT", "GLOW", "MIST", "HOVER", "TWINKLE"
 ];
+
+const pauseSigns = "@#&*?!"; // Caractères spéciaux pour la pause
 
 function drawTunicChar(
     context: CanvasRenderingContext2D,
@@ -131,6 +139,15 @@ export default function Home() {
             const bottomWord = words[bottomWordIndex];
             const tunicWord = "TUNIC";
 
+            // Générer les textes pour la pause
+            const topDisplay = isPaused 
+                ? pauseSigns.repeat(Math.ceil(topWord.length / pauseSigns.length)).slice(0, topWord.length)
+                : topWord;
+                
+            const bottomDisplay = isPaused 
+                ? pauseSigns.repeat(Math.ceil(bottomWord.length / pauseSigns.length)).slice(0, bottomWord.length)
+                : bottomWord;
+
             const centerX = canvas.width / dpr / 2;
             const centerY = canvas.height / dpr / 2;
 
@@ -158,15 +175,15 @@ export default function Home() {
             context.restore();
 
             // Mot du haut animé
-            const topTotalWidth = topWord.length * charWidth + (topWord.length - 1) * letterSpacing;
+            const topTotalWidth = topDisplay.length * charWidth + (topDisplay.length - 1) * letterSpacing;
             let topX = centerX - topTotalWidth / 2;
             const topY = lineYTop - spaceBetweenAnimatedAndTunic;
 
-            for (let i = 0; i < topWord.length; i++) {
+            for (let i = 0; i < topDisplay.length; i++) {
                 const offsetY = isPaused ? 0 : getLetterOffset(i, time);
                 drawTunicChar(
                     context,
-                    topWord[i],
+                    topDisplay[i],
                     topX,
                     topY + offsetY,
                     charWidth,
@@ -177,15 +194,15 @@ export default function Home() {
             }
 
             // Mot du bas animé
-            const bottomTotalWidth = bottomWord.length * charWidth + (bottomWord.length - 1) * letterSpacing;
+            const bottomTotalWidth = bottomDisplay.length * charWidth + (bottomDisplay.length - 1) * letterSpacing;
             let bottomX = centerX - bottomTotalWidth / 2;
             const bottomY = lineYBottom + spaceBetweenTunicAndBottom;
 
-            for (let i = 0; i < bottomWord.length; i++) {
+            for (let i = 0; i < bottomDisplay.length; i++) {
                 const offsetY = isPaused ? 0 : getLetterOffset(i, time + 1);
                 drawTunicChar(
                     context,
-                    bottomWord[i],
+                    bottomDisplay[i],
                     bottomX,
                     bottomY + offsetY,
                     charWidth,
