@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import "destyle.css";
+import "./page.css";
 
 type TunicFontChar = keyof typeof tunicFontData;
 
@@ -9,6 +11,27 @@ const tunicFontData = {
     "N": [[0.1, 0], [0.1, 1], [0.9, 0], [0.9, 1]],
     "I": [[0.1, 0], [0.9, 0], [0.5, 0], [0.5, 1], [0.1, 1], [0.9, 1]],
     "C": [[0.9, 0.1], [0.1, 0.1], [0.1, 0.9], [0.9, 0.9]],
+    "M": [[0.1, 0], [0.1, 1], [0.5, 0.3], [0.9, 1], [0.9, 0]],
+    "A": [[0.1, 1], [0.5, 0], [0.9, 1], [0.2, 0.6], [0.8, 0.6]],
+    "G": [[0.9, 0.1], [0.1, 0.1], [0.1, 0.9], [0.9, 0.9], [0.9, 0.5], [0.6, 0.5]],
+    "F": [[0.1, 0], [0.1, 1], [0.9, 1], [0.1, 0.5], [0.7, 0.5]],
+    "L": [[0.1, 0], [0.1, 1], [0.9, 1]],
+    "O": [[0.1, 0.1], [0.1, 0.9], [0.9, 0.9], [0.9, 0.1], [0.1, 0.1]],
+    "W": [[0, 0], [0.2, 1], [0.5, 0.7], [0.8, 1], [1, 0]],
+    "V": [[0, 0], [0.5, 1], [1, 0]],
+    "E": [[0.9, 0], [0.1, 0], [0.1, 1], [0.9, 1], [0.1, 0.5], [0.7, 0.5]],
+    "S": [[0.9, 0.1], [0.1, 0.1], [0.1, 0.5], [0.9, 0.5], [0.9, 0.9], [0.1, 0.9]],
+    "D": [[0.1, 0], [0.1, 1], [0.7, 1], [0.9, 0.8], [0.9, 0.2], [0.7, 0]],
+    "R": [[0.1, 0], [0.1, 1], [0.9, 1], [0.9, 0.5], [0.1, 0.5], [0.9, 0]],
+    "B": [[0.1, 0], [0.1, 1], [0.7, 1], [0.9, 0.8], [0.7, 0.5], [0.1, 0.5], [0.7, 0.5], [0.9, 0.2], [0.7, 0]],
+    "Z": [[0.1, 0], [0.9, 0], [0.1, 1], [0.9, 1]],
+    "H": [[0.1, 0], [0.1, 1], [0.9, 0], [0.9, 1], [0.1, 0.5], [0.9, 0.5]],
+    "K": [[0.1, 0], [0.1, 1], [0.9, 0], [0.1, 0.5], [0.9, 1]],
+    "P": [[0.1, 0], [0.1, 1], [0.9, 1], [0.9, 0.5], [0.1, 0.5]],
+    "Y": [[0.1, 0], [0.5, 0.5], [0.9, 0], [0.5, 0.5], [0.5, 1]],
+    "J": [[0.1, 0.1], [0.1, 0.3], [0.9, 0.3], [0.9, 0], [0.9, 1]],
+    "Q": [[0.1, 0.1], [0.1, 0.9], [0.9, 0.9], [0.9, 0.1], [0.1, 0.1], [0.7, 0.7], [0.9, 0.9]],
+    "X": [[0.1, 0], [0.9, 1], [0.1, 1], [0.9, 0]],
     "@": [[0.5, 0], [0, 0.5], [0.5, 1], [1, 0.5], [0.5, 0], [0.9, 0.1], [0.1, 0.9]],
     "#": [[0.3, 0], [0.3, 1], [0.7, 0], [0.7, 1], [0, 0.3], [1, 0.3], [0, 0.7], [1, 0.7]],
     "&": [[0.8, 0], [0.2, 1], [0.8, 1], [0.2, 0.3], [0.8, 0.7]],
@@ -22,7 +45,7 @@ const words = [
     "BREEZE", "SOFT", "GLOW", "MIST", "HOVER", "TWINKLE"
 ];
 
-const pauseSigns = "@#&*?!"; // Caractères spéciaux pour la pause
+const pauseSigns = "@#&*?!";
 
 function drawTunicChar(
     context: CanvasRenderingContext2D,
@@ -90,23 +113,21 @@ function drawWaveLine(
 }
 
 export default function Home() {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const requestRef = useRef<number | null>(null);
     const [topWordIndex, setTopWordIndex] = useState(0);
     const [bottomWordIndex, setBottomWordIndex] = useState(1);
     const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+        const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        const width = canvas.clientWidth * 2;
+        const height = canvas.clientHeight * 2;
+        canvas.width = width;
+        canvas.height = height;
         const context = canvas.getContext("2d");
         if (!context) return;
 
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        context.scale(dpr, dpr);
+        context.scale(2, 2);
 
         const baseCharHeight = 30;
         const charWidth = 24;
@@ -125,7 +146,7 @@ export default function Home() {
 
         const draw = (timestamp?: number) => {
             const time = (timestamp ?? 0) / 1000;
-            if (!canvas || !context) return;
+            if (!context) return;
 
             context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -139,7 +160,6 @@ export default function Home() {
             const bottomWord = words[bottomWordIndex];
             const tunicWord = "TUNIC";
 
-            // Générer les textes pour la pause
             const topDisplay = isPaused 
                 ? pauseSigns.repeat(Math.ceil(topWord.length / pauseSigns.length)).slice(0, topWord.length)
                 : topWord;
@@ -148,23 +168,20 @@ export default function Home() {
                 ? pauseSigns.repeat(Math.ceil(bottomWord.length / pauseSigns.length)).slice(0, bottomWord.length)
                 : bottomWord;
 
-            const centerX = canvas.width / dpr / 2;
-            const centerY = canvas.height / dpr / 2;
+            const centerX = canvas.clientWidth / 2;
+            const centerY = canvas.clientHeight / 2;
 
-            // Lignes ondulantes
             const tunicTotalWidth = tunicWord.length * charWidth + (tunicWord.length - 1) * letterSpacing;
             const tunicStartX = centerX - tunicTotalWidth / 2;
             const tunicEndX = centerX + tunicTotalWidth / 2;
 
             const lineSpacing = baseCharHeight + 10;
-
             const lineYTop = centerY - lineSpacing;
             const lineYBottom = centerY + lineSpacing;
 
             drawWaveLine(context, tunicStartX, lineYTop, tunicEndX, time, 6, 1.5);
             drawWaveLine(context, tunicStartX, lineYBottom, tunicEndX, time + 2.5, 6, 1.5);
 
-            // Mot "TUNIC" simple en typo système, centré entre les deux lignes
             const tunicY = (lineYTop + lineYBottom) / 2 - baseCharHeight / 2;
             context.save();
             context.fillStyle = "white";
@@ -174,7 +191,6 @@ export default function Home() {
             context.fillText(tunicWord, centerX, tunicY);
             context.restore();
 
-            // Mot du haut animé
             const topTotalWidth = topDisplay.length * charWidth + (topDisplay.length - 1) * letterSpacing;
             let topX = centerX - topTotalWidth / 2;
             const topY = lineYTop - spaceBetweenAnimatedAndTunic;
@@ -193,7 +209,6 @@ export default function Home() {
                 topX += charWidth + letterSpacing;
             }
 
-            // Mot du bas animé
             const bottomTotalWidth = bottomDisplay.length * charWidth + (bottomDisplay.length - 1) * letterSpacing;
             let bottomX = centerX - bottomTotalWidth / 2;
             const bottomY = lineYBottom + spaceBetweenTunicAndBottom;
@@ -215,25 +230,23 @@ export default function Home() {
             requestRef.current = requestAnimationFrame(draw);
         };
 
+        const handleCanvasClick = () => {
+            setIsPaused((p) => !p);
+        };
+
+        canvas.addEventListener('click', handleCanvasClick);
+
         requestRef.current = requestAnimationFrame(draw);
 
         return () => {
             if (requestRef.current) cancelAnimationFrame(requestRef.current);
+            canvas.removeEventListener('click', handleCanvasClick);
         };
     }, [topWordIndex, bottomWordIndex, isPaused]);
 
-    const handleCanvasClick = () => {
-        setIsPaused((p) => !p);
-    };
-
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 overflow-hidden">
-            <canvas
-                ref={canvasRef}
-                onClick={handleCanvasClick}
-                className="absolute top-0 left-0 w-full h-full cursor-pointer"
-                style={{ userSelect: "none" }}
-            />
+        <div className="app">
+            <canvas id="canvas" style={{ cursor: 'pointer' }}></canvas>
         </div>
     );
 }
